@@ -38,6 +38,8 @@ export default function AboutScreen() {
 
   const [answerList, setAnswerList] = useState([]);
 
+  const [imageList, setimageList] = useState([]);
+
   useEffect(() => {
 
 
