@@ -24,6 +24,8 @@ export default function AboutScreen() {
 
   const [correctAnswer, setCorrectAnswer] = useState([]);
 
+  const [imageList, setimageList] = useState([]);
+
   let [selectedAnswer, setSelectedAnswer] = useState([]);
 
   let stringWithoutBraces = null;
@@ -38,7 +40,11 @@ export default function AboutScreen() {
 
   const [answerList, setAnswerList] = useState([]);
 
-  const [imageList, setimageList] = useState([]);
+  //const [imageList, setimageList] = useState([]);
+
+  let imageListArr = [];
+
+  let check = "";
 
   useEffect(() => {
 
@@ -157,13 +163,23 @@ export default function AboutScreen() {
 
           correctAnswerArr.push(response.data.data[i].q_id)
 
+          imageListArr.push(response.data.data[i].image_path);
 
-          console.log(response.data.data[i].correct_answer)
+         
+        
+         // console.log(response.data.data[i].correct_answer)
         }
+
+          console.log(imageListArr[4]+"Space");
+
+         // check = imageList[4];
 
         console.log(answerList);
         setMergeArray(combinedArr);
         setCorrectAnswer(correctAnswerArr);
+        setimageList(imageListArr);
+
+        console.log(imageList);
 
 
         console.log(correctAnswer);
@@ -181,7 +197,7 @@ export default function AboutScreen() {
     fetchData(); // Call the async function inside useEffect
 
 
-  }, [quesCount], [mergeArray]); // 
+  }, [quesCount], [mergeArray],[imageList]); // 
 
 
   for (let i = 0; i <= quesCount; i++) {
@@ -196,15 +212,17 @@ export default function AboutScreen() {
       arrayValues = stringWithoutBraces.split(','); // Split by commas
 
       console.log(arrayValues + "ArrayValue");
+      console.log(imageList[4]);
 
       return (
         <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
+  
           <View key={i} style={styles.box}>
 
-            <View>
+          <View>
               <Text></Text>
-              <Image source={'https://progressbucket.s3.us-east-005.backblazeb2.com/bismi.png'} style={{ width: 300, height: 100 }} />
+              <Image source={imageList[i]} style={{ width: 200, height: 150 }} />
             </View>
 
             {arrayValues.map((_, x) => (
