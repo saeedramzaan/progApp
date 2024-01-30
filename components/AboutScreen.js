@@ -3,14 +3,7 @@ import React, { useState, useEffect, Component } from "react";
 import { Button, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import axios from 'axios';
 
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
-
-
-
 export default function AboutScreen() {
-
-  //  const [currentPage, setCurrentPage] = useState(1);
 
   const [quesData, setQuesData] = useState([]);
 
@@ -36,11 +29,7 @@ export default function AboutScreen() {
 
   let correctAnswerArr = [];
 
-  //let answerList = [];
-
   const [answerList, setAnswerList] = useState([]);
-
-  //const [imageList, setimageList] = useState([]);
 
   let imageListArr = [];
 
@@ -61,7 +50,6 @@ export default function AboutScreen() {
     try {
 
       const resAnswer = await axios.post('http://localhost:8000/api/ans', { id });
-      //  console.log(resAnswer.data);
 
       const selectedText = resAnswer.data.replace(/["'\s]/g, '');
 
@@ -82,8 +70,6 @@ export default function AboutScreen() {
 
       console.log(answerList);
 
-
-
     } catch (error) {
       // Handle errors
       console.error('Error fetching data:', error);
@@ -96,53 +82,6 @@ export default function AboutScreen() {
 
     setSelectedAnswer(text);
 
-    //   answerList.push(text)
-    //  console.log(answerList);
-
-    //  setAnswerList(prevList => [...prevList, text]);
-
-    //  console.log(answerList);
-
-
-    //  for(let i = 0; i<=correctAnswer.length; i++){ 
-
-
-
-    //  }
-
-    //  if(dbText===selectedText){
-    //   console.log("found");
-    // }else{
-    //   console.log("Not found");
-    // }
-
-    const originalString = '   "Hello, World!"   ';
-
-    // Remove quotation symbols and white spaces
-    //  const modifiedString = originalString.replace(/["']/g, '').trim();
-
-
-
-
-    // console.log(modifiedString);
-
-    //  console.log(correctAnswer[0]);
-    //  console.log(selectedText);
-
-    //  console.log('validateanswer - ', data)
-
-
-
-    // const array = ['In the name of', 'merciful', 'gracious', 'day']; // your array
-    // let foundItem = null;
-
-    // for (let i = 0; i < array.length; i++) {
-    //   if (array[i] === data) {
-    //     foundItem = array[i];
-    //     alert(foundItem);
-    //     break; // optional: exit the loop once the item is found
-    //   }
-    // }
   }
 
   useEffect(() => {
@@ -165,28 +104,11 @@ export default function AboutScreen() {
 
           imageListArr.push(response.data.data[i].image_path);
 
-         
-        
-         // console.log(response.data.data[i].correct_answer)
         }
 
-          console.log(imageListArr[4]+"Space");
-
-         // check = imageList[4];
-
-        console.log(answerList);
         setMergeArray(combinedArr);
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
-
-        console.log(imageList);
-
-
-        console.log(correctAnswer);
-        console.log(combinedArr);
-
-
-
 
       } catch (error) {
         // Handle errors
@@ -211,9 +133,6 @@ export default function AboutScreen() {
       stringWithoutBraces = mergeArray[i].slice(1, -1); // Remove curly braces
       arrayValues = stringWithoutBraces.split(','); // Split by commas
 
-      console.log(arrayValues + "ArrayValue");
-      console.log(imageList[4]);
-
       return (
         <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
@@ -226,10 +145,14 @@ export default function AboutScreen() {
             </View>
 
             {arrayValues.map((_, x) => (
-             // console.log(x + "x"),
+
               <TouchableOpacity key={x} style={styles.button} onPress={() => validateAnswer(correctAnswer[i], arrayValues[x])}  >
                 <Text>
-                  {arrayValues[x]}
+                  {
+                  
+                  arrayValues[x].replace(/["']/g, '')
+
+                  }
                 </Text>
               </TouchableOpacity>
 
