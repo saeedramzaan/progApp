@@ -2,6 +2,7 @@
 import React, { useState, useEffect, Component } from "react";
 import { Button, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import axios from 'axios';
+import { TouchableHighlight } from "react-native-web";
 
 export default function AboutScreen() {
 
@@ -9,17 +10,27 @@ export default function AboutScreen() {
 
   let [mergeArray, setMergeArray] = useState([]);
 
-  let [singleArray, setSingelArray] = useState([]);
-
   const [quesCount, setQuesCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const [correctAnswer, setCorrectAnswer] = useState([]);
 
+  const [qid, setQid] = useState([]);
+
   const [imageList, setimageList] = useState([]);
 
   let [selectedAnswer, setSelectedAnswer] = useState([]);
+
+  const [state, setState] = useState({
+    users: []
+  });
+
+  const [result, setResult] = useState({
+    score: []
+  });
+
+
 
   let stringWithoutBraces = null;
 
@@ -31,16 +42,17 @@ export default function AboutScreen() {
 
   const [answerList, setAnswerList] = useState([]);
 
+  const [lastSelected, setLastSelected] = useState(null);
+
   let imageListArr = [];
 
   let check = "";
 
   useEffect(() => {
 
-
   }, [])
 
-  const handleAnswer = async (id) => {
+  const handleAnswer = async (id, selectedAnswer) => {
     // Logic to handle the user's answer and move to the next page
     setCurrentPage(currentPage + 1);
 
@@ -60,15 +72,38 @@ export default function AboutScreen() {
       console.log(selectedText);
       console.log(textClick);
 
+
+
       if (selectedText == textClick) {
+
         status = true;
-        answerList.push(status);
+
+        const fields = { id, status };
+
+        setResult(prevState => ({
+          ...prevState,
+          score: [...prevState.score, fields]
+        }));
+
+
       } else {
+
         status = false;
-        answerList.push(status);
+
+        const fields = { id, status };
+
+        setResult(prevState => ({
+          ...prevState,
+          score: [...prevState.score, fields]
+        }));
+
       }
 
-      console.log(answerList);
+      setLastSelected(null);
+
+      const trueCount = answerList.filter(item => item === true).length;
+
+      console.log(trueCount);
 
     } catch (error) {
       // Handle errors
@@ -78,9 +113,15 @@ export default function AboutScreen() {
 
   };
 
-  const validateAnswer = async (id, text) => {
+  console.log(result);
+
+  const validateAnswer = async (btnId, id, text) => {
 
     setSelectedAnswer(text);
+
+    console.log(btnId);
+
+    setLastSelected(btnId);
 
   }
 
@@ -110,6 +151,7 @@ export default function AboutScreen() {
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
 
+
       } catch (error) {
         // Handle errors
         console.error('Error fetching data:', error);
@@ -119,12 +161,10 @@ export default function AboutScreen() {
     fetchData(); // Call the async function inside useEffect
 
 
-  }, [quesCount], [mergeArray],[imageList]); // 
+  }, [quesCount], [mergeArray], [imageList]); // 
 
 
   for (let i = 0; i <= quesCount; i++) {
-
-
 
     if (i == currentPage) {
 
@@ -136,42 +176,46 @@ export default function AboutScreen() {
       return (
         <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
-  
+
           <View key={i} style={styles.box}>
 
-          <View>
+            <View>
               <Text></Text>
               <Image source={imageList[i]} style={{ width: 200, height: 150 }} />
             </View>
 
             {arrayValues.map((_, x) => (
 
-              <TouchableOpacity key={x} style={styles.button} onPress={() => validateAnswer(correctAnswer[i], arrayValues[x])}  >
+              <TouchableHighlight key={x} style={[styles.button, lastSelected === x && { backgroundColor: 'green' }]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x])}  >
                 <Text>
-                  {
-                  
-                  arrayValues[x].replace(/["']/g, '')
-
-                  }
+                  {arrayValues[x].replace(/["']/g, '')}
                 </Text>
-              </TouchableOpacity>
+              </TouchableHighlight>
 
             ))}
 
           </View>
 
           <View style={styles.answerPanel}>
-            <TouchableOpacity style={styles.button} onPress={() => handleAnswer(correctAnswer[i])} >
+            <TouchableOpacity style={styles.button} onPress={() => handleAnswer(correctAnswer[i], selectedAnswer)} >
               <Text style={styles.buttonText}> Lock{i} </Text>
             </TouchableOpacity>
           </View>
+
         </View>
       )
-
     }
   }
 
+  return (
+    <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+      <TouchableOpacity style={styles.button} onPress={() => handleAnswer()} >
+        <Text style={styles.buttonText}> Lock </Text>
+      </TouchableOpacity>
+    </View>
+  )
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -190,7 +234,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey'
 
   },
-
   answerPanel: {
     width: 320, // Set the desired width and height for the square box
     height: 100,
@@ -209,5 +252,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  activeButton: {
+    backgroundColor: 'green', // Change to the desired active color
   },
 });
