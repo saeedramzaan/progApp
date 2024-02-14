@@ -1,8 +1,10 @@
 // Aboutscreen.js
 import React, { useState, useEffect, Component } from "react";
 import { Button, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { TouchableHighlight } from "react-native-web";
+import react from "react";
 
 export default function AboutScreen() {
 
@@ -10,7 +12,7 @@ export default function AboutScreen() {
 
   let [mergeArray, setMergeArray] = useState([]);
 
-  const [quesCount, setQuesCount] = useState(0);
+  let [quesCount, setQuesCount] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,6 +23,12 @@ export default function AboutScreen() {
   const [imageList, setimageList] = useState([]);
 
   let [selectedAnswer, setSelectedAnswer] = useState([]);
+
+  const [reformedContent, setReformedContent] = useState(null);
+
+  const [nextQues, setNextQues] = useState(0);
+
+ 
 
   const [state, setState] = useState({
     users: []
@@ -40,7 +48,13 @@ export default function AboutScreen() {
 
   let correctAnswerArr = [];
 
+  let repeat = [];
+
+  let k = 0; 
+
   const [answerList, setAnswerList] = useState([]);
+
+  const [repeatQues, setRepeatQues] = useState([]);
 
   const [lastSelected, setLastSelected] = useState(null);
 
@@ -48,16 +62,54 @@ export default function AboutScreen() {
 
   let check = "";
 
+  let trueCount1 = 0;
+  let falseCount1 = 0;
+
+  //let question_mode = false;
+  
+  let [question_mode, setQuestion_mode] = useState(false);
+  
+
+  let i = 0;
+
   useEffect(() => {
 
   }, [])
 
-  const handleAnswer = async (id, selectedAnswer) => {
+  const handleAnswer = async (id, selectedAnswer, question_mode) => {
     // Logic to handle the user's answer and move to the next page
-    setCurrentPage(currentPage + 1);
+
+    
+
+    console.log(question_mode);
+
+    if(question_mode==true){
+      console.log('true');
+         setNextQues(nextQues +1);
+      
+      for (let j = 0; j < repeat.length ; j++) { // Example: Generate 5 elements
+        console.log(repeat[j]);
+        console.log(question_mode);
+        if (j == nextQues) {
+          setCurrentPage(repeat[j]);
+          console.log(repeat[j]);
+        }
+
+        if(j==repeat.length-1){
+          console.log('Equal');
+        }
+    }
+    }else{
+      console.log('false');
+      setCurrentPage(currentPage + 1);
+  
+    }
+
+
+    const value = await AsyncStorage.getItem('yourKey');
 
     console.log(selectedAnswer);
-    console.log(id);
+    console.log(value);
 
     try {
 
@@ -71,8 +123,6 @@ export default function AboutScreen() {
 
       console.log(selectedText);
       console.log(textClick);
-
-
 
       if (selectedText == textClick) {
 
@@ -101,9 +151,15 @@ export default function AboutScreen() {
 
       setLastSelected(null);
 
+
+    
+      // Iterate through the data array
+   
+
       const trueCount = answerList.filter(item => item === true).length;
 
       console.log(trueCount);
+
 
     } catch (error) {
       // Handle errors
@@ -115,8 +171,43 @@ export default function AboutScreen() {
 
   console.log(result);
 
+  console.log(result.score);
+
+
+
+  result.score.forEach(item => {
+    // Check the status of each item and increment the corresponding counter
+    if (item.status==true) {
+
+      trueCount1++;
+
+    console.log(repeat+"true");
+
+    } else {
+
+      falseCount1++;
+     
+      console.log(item.id+"false");
+
+      repeat.push(item.id); 
+    }
+  });
+
+  console.log(repeat+"Repeat");
+
+  console.log(falseCount1);
+
+  console.log(repeatQues);
+
+ 
+
+
   const validateAnswer = async (btnId, id, text) => {
 
+    await AsyncStorage.setItem('yourKey', 'yourValue');
+
+    
+    
     setSelectedAnswer(text);
 
     console.log(btnId);
@@ -130,6 +221,7 @@ export default function AboutScreen() {
     const fetchData = async () => {
 
       try {
+
         const response = await axios.get('http://localhost:8000/create');
         // Handle the response and update state or perform any other actions
         console.log(response.data.data[4].answer);
@@ -151,11 +243,13 @@ export default function AboutScreen() {
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
 
+  
 
       } catch (error) {
         // Handle errors
         console.error('Error fetching data:', error);
       }
+      
     };
 
     fetchData(); // Call the async function inside useEffect
@@ -163,8 +257,41 @@ export default function AboutScreen() {
 
   }, [quesCount], [mergeArray], [imageList]); // 
 
+  const reformQues = async () => {
 
-  for (let i = 0; i <= quesCount; i++) {
+    let k = 1;
+    let elements = [];
+
+   // question_mode = true; 
+
+    setQuestion_mode(true);
+
+    setNextQues(nextQues +1);
+
+    console.log(repeat.length);
+
+    let textToRender;
+
+    console.log(nextQues);
+
+  // if (1 === k) {
+    for (let j = 0; j < repeat.length ; j++) { // Example: Generate 5 elements
+      console.log(repeat[j]);
+      if (j == nextQues) {
+        setCurrentPage(repeat[j]);
+        console.log(repeat[j]);
+        elements.push(
+          <View key={j} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+           {repeat[j]}
+          </View>
+        );
+      }
+  }
+
+  setReformedContent(elements);
+  };
+
+  for (i; i <= quesCount; i++) {
 
     if (i == currentPage) {
 
@@ -186,21 +313,29 @@ export default function AboutScreen() {
 
             {arrayValues.map((_, x) => (
 
-              <TouchableHighlight key={x} style={[styles.button, lastSelected === x && { backgroundColor: 'green' }]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x])}  >
+              <TouchableHighlight key={x} style={[styles.button, lastSelected === x && { backgroundColor: 'green' }]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x],question_mode)}  >
                 <Text>
                   {arrayValues[x].replace(/["']/g, '')}
                 </Text>
               </TouchableHighlight>
+
 
             ))}
 
           </View>
 
           <View style={styles.answerPanel}>
-            <TouchableOpacity style={styles.button} onPress={() => handleAnswer(correctAnswer[i], selectedAnswer)} >
-              <Text style={styles.buttonText}> Lock{i} </Text>
+            <TouchableOpacity style={styles.button} onPress={() => handleAnswer(correctAnswer[i], selectedAnswer, question_mode)} >
+              <Text style={styles.buttonText}> Lock </Text>
             </TouchableOpacity>
           </View>
+
+      <View style={styles.container}>
+      <TouchableOpacity onPress={reformQues}>
+        <Text>Press to Reform</Text>
+      </TouchableOpacity>
+      {reformedContent}
+      </View>
 
         </View>
       )
@@ -208,12 +343,30 @@ export default function AboutScreen() {
   }
 
   return (
-    <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
-      <TouchableOpacity style={styles.button} onPress={() => handleAnswer()} >
-        <Text style={styles.buttonText}> Lock </Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={reformQues}>
+        <Text>Press to Reform</Text>
       </TouchableOpacity>
+      {reformedContent}
     </View>
-  )
+  );
+
+  // return (
+  //   <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+  //     {/* <TouchableOpacity style={styles.button} onPress={() => reformQues()} >
+  //       <Text style={styles.buttonText}> Lock{repeat} </Text>
+  //     </TouchableOpacity> */}
+  //      <Text> correct Answers </Text>
+  //      <Text> {trueCount1} </Text>
+
+  //      <Text> Wrong Answers </Text>
+  //      <Text> {falseCount1} </Text>
+
+  //      <TouchableOpacity style={styles.button} onPress={() => reformQues()} >
+  //       <Text style={styles.buttonText}> Lock{repeat} </Text>
+  //     </TouchableOpacity> 
+  //   </View>
+  // )
 }
 
 const styles = StyleSheet.create({
@@ -232,7 +385,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'grey'
-
   },
   answerPanel: {
     width: 320, // Set the desired width and height for the square box
@@ -242,7 +394,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'grey'
-
   },
   button: {
     width: '45%', // Adjust the width percentage based on your preference
