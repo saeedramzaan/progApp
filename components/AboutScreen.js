@@ -54,7 +54,7 @@ export default function AboutScreen() {
 
   const [answerList, setAnswerList] = useState([]);
 
-  const [repeatQues, setRepeatQues] = useState([]);
+  let [repeatQues, setRepeatQues] = useState([]);
 
   const [lastSelected, setLastSelected] = useState(null);
 
@@ -79,31 +79,17 @@ export default function AboutScreen() {
   const handleAnswer = async (id, selectedAnswer, question_mode) => {
     // Logic to handle the user's answer and move to the next page
 
-    
+    console.log(id);
+    console.log(correctAnswer);
+
+    let elements = [];
 
     console.log(question_mode);
+    console.log(question_mode);
 
-    if(question_mode==true){
-      console.log('true');
-         setNextQues(nextQues +1);
-      
-      for (let j = 0; j < repeat.length ; j++) { // Example: Generate 5 elements
-        console.log(repeat[j]);
-        console.log(question_mode);
-        if (j == nextQues) {
-          setCurrentPage(repeat[j]);
-          console.log(repeat[j]);
-        }
+    
 
-        if(j==repeat.length-1){
-          console.log('Equal');
-        }
-    }
-    }else{
-      console.log('false');
-      setCurrentPage(currentPage + 1);
   
-    }
 
 
     const value = await AsyncStorage.getItem('yourKey');
@@ -135,11 +121,66 @@ export default function AboutScreen() {
           score: [...prevState.score, fields]
         }));
 
+        if(question_mode==true){
+
+         console.log('question_mode true');
+
+         console.log(repeat);
+      
+
+         console.log(repeat);
+         console.log(id + "has been allocated for remove");
+        repeatQues = repeatQues.filter(item => item !== id);
+
+        setRepeatQues(repeatQues);
+        console.log(repeatQues);
+
+        if(repeatQues.length==0){
+          console.log('repeatQues is');
+
+          setCurrentPage(quesCount + 1);
+         // console.log(quesCount);
+
+          elements.push(
+            <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+             <Text> You have completed</Text>
+            </View>
+          );
+
+          setReformedContent(elements);
+        }
+
+        }
+
+        // if(quesCount==currentPage){
+        //   console.log('repeatQues is');
+        
+        // setCurrentPage(quesCount + 1);
+        // // console.log(quesCount);
+        
+        // elements.push(
+        //   <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+        //    {/* <Text> {falseCount1} </Text> */}
+        //    <TouchableOpacity onPress={reformQues}>
+        //    <Text>Press to Reform</Text>
+        //   </TouchableOpacity>
+        //   </View>
+        // );
+        
+        // setReformedContent(elements);
+        //   }
+
+        // repeat.forEach(item => {
+        //   console.log(item+"repeat no")
+        // });
+
+
+
 
       } else {
 
         status = false;
-
+       
         const fields = { id, status };
 
         setResult(prevState => ({
@@ -147,15 +188,48 @@ export default function AboutScreen() {
           score: [...prevState.score, fields]
         }));
 
+      //  repeat.push(id); 
+        setRepeatQues(prevState => [...prevState, id]);
+       
       }
 
+      if(question_mode==true){
+        console.log('true');
+           setNextQues(nextQues +1);
+           console.log(nextQues + "Next Ques");
+  
+           console.log(quesCount);
+        for (let j = 0; j < quesCount; j++) { // Example: Generate 5 elements
+         // console.log(repeatQues[j]+" repeat");
+        console.log(j + "j val");
+          console.log("nextQues Value"+nextQues);
+        //  console.log(question_mode);
+        for (let r = 0; r < repeatQues.length; r++) { 
+          
+          if (correctAnswer[j] == repeatQues[r]) {
+            setCurrentPage(repeatQues[r]);
+            console.log(repeatQues[r]+" current page executed")
+           // console.log(repeat[j]);
+          }
+  
+          // if(j==repeat.length-1){
+          //   console.log('Equal');
+          // }
+        }
+      }
+      }else{
+        console.log('false');
+        setCurrentPage(currentPage + 1);
+    
+      }
+
+
+      console.log(repeatQues);
       setLastSelected(null);
 
-
-    
+    //  setRepeatQues(repeat);
       // Iterate through the data array
    
-
       const trueCount = answerList.filter(item => item === true).length;
 
       console.log(trueCount);
@@ -173,23 +247,24 @@ export default function AboutScreen() {
 
   console.log(result.score);
 
-
+  console.log(repeatQues);
 
   result.score.forEach(item => {
     // Check the status of each item and increment the corresponding counter
+    
     if (item.status==true) {
 
       trueCount1++;
 
-    console.log(repeat+"true");
+      console.log(repeat+"true");
 
     } else {
 
       falseCount1++;
      
       console.log(item.id+"false");
-
-      repeat.push(item.id); 
+     // repeat.push(item.id); 
+     // repeat = repeat.filter(item => item !== item.id);
     }
   });
 
@@ -206,8 +281,6 @@ export default function AboutScreen() {
 
     await AsyncStorage.setItem('yourKey', 'yourValue');
 
-    
-    
     setSelectedAnswer(text);
 
     console.log(btnId);
@@ -243,7 +316,7 @@ export default function AboutScreen() {
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
 
-  
+        
 
       } catch (error) {
         // Handle errors
@@ -260,7 +333,7 @@ export default function AboutScreen() {
   const reformQues = async () => {
 
     let k = 1;
-    let elements = [];
+    // let elements = [];
 
    // question_mode = true; 
 
@@ -275,31 +348,32 @@ export default function AboutScreen() {
     console.log(nextQues);
 
   // if (1 === k) {
-    for (let j = 0; j < repeat.length ; j++) { // Example: Generate 5 elements
-      console.log(repeat[j]);
+    for (let j = 0; j < repeatQues.length ; j++) { // Example: Generate 5 elements
+      console.log(repeatQues[j]);
       if (j == nextQues) {
-        setCurrentPage(repeat[j]);
-        console.log(repeat[j]);
-        elements.push(
-          <View key={j} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
-           {repeat[j]}
-          </View>
-        );
+        setCurrentPage(repeatQues[j]);
+        console.log(repeatQues[j]);
+        // elements.push(
+        //   <View key={j} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+        //    {repeatQues[j]}
+        //   </View>
+        // );
       }
   }
 
-  setReformedContent(elements);
   };
 
   for (i; i <= quesCount; i++) {
 
+    console.log(i+ "Value without ++i");
+
     if (i == currentPage) {
 
       i--;
-
+      console.log(i+ "Value without --i");
       stringWithoutBraces = mergeArray[i].slice(1, -1); // Remove curly braces
       arrayValues = stringWithoutBraces.split(','); // Split by commas
-
+           
       return (
         <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
@@ -319,7 +393,7 @@ export default function AboutScreen() {
                 </Text>
               </TouchableHighlight>
 
-
+    
             ))}
 
           </View>
@@ -332,20 +406,24 @@ export default function AboutScreen() {
 
       <View style={styles.container}>
       <TouchableOpacity onPress={reformQues}>
+
         <Text>Press to Reform</Text>
+        <Text></Text>
       </TouchableOpacity>
       {reformedContent}
+     
       </View>
 
         </View>
       )
     }
+ 
   }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={reformQues}>
-        <Text>Press to Reform</Text>
+      <Text>Press to Reform</Text>
       </TouchableOpacity>
       {reformedContent}
     </View>
