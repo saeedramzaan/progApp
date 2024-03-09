@@ -1,6 +1,6 @@
 // Aboutscreen.js
 import React, { useState, useEffect, Component } from "react";
-import { Button, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Button, View, Text, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { TouchableHighlight } from "react-native-web";
@@ -26,7 +26,11 @@ export default function AboutScreen() {
 
   const [reformedContent, setReformedContent] = useState(null);
 
+  const [displayState, setDisplayState] = useState(null);
+
   const [nextQues, setNextQues] = useState(0);
+
+  const [backgroundColor, setBackgroundColor] = useState(null);
 
  
 
@@ -58,9 +62,16 @@ export default function AboutScreen() {
 
   const [lastSelected, setLastSelected] = useState(null);
 
+  let [outline,setOutline] = useState(null);
+
   let imageListArr = [];
 
   let check = "";
+
+
+  let status = null;
+
+  //var outline = 0;
 
   let trueCount1 = 0;
   let falseCount1 = 0;
@@ -74,28 +85,26 @@ export default function AboutScreen() {
 
   useEffect(() => {
 
+    
+
   }, [])
 
+ 
+
   const handleAnswer = async (id, selectedAnswer, question_mode) => {
+    
     // Logic to handle the user's answer and move to the next page
 
-    console.log(id);
-    console.log(correctAnswer);
+  
+    setOutline(1);
+    setBackgroundColor('#DAF7A6');
 
     let elements = [];
 
-    console.log(question_mode);
-    console.log(question_mode);
-
-    
-
-  
-
+    let displayResult = [];
 
     const value = await AsyncStorage.getItem('yourKey');
 
-    console.log(selectedAnswer);
-    console.log(value);
 
     try {
 
@@ -105,13 +114,9 @@ export default function AboutScreen() {
 
       const textClick = selectedAnswer.replace(/["'\s]/g, '');
 
-      let status = false;
-
-      console.log(selectedText);
-      console.log(textClick);
 
       if (selectedText == textClick) {
-
+       // setBackgroundColor('red'); 
         status = true;
 
         const fields = { id, status };
@@ -123,23 +128,14 @@ export default function AboutScreen() {
 
         if(question_mode==true){
 
-         console.log('question_mode true');
-
-         console.log(repeat);
-      
-
-         console.log(repeat);
-         console.log(id + "has been allocated for remove");
+        // Remove the correct answer from repeatQues array   
         repeatQues = repeatQues.filter(item => item !== id);
 
         setRepeatQues(repeatQues);
-        console.log(repeatQues);
 
         if(repeatQues.length==0){
-          console.log('repeatQues is');
-
+    
           setCurrentPage(quesCount + 1);
-         // console.log(quesCount);
 
           elements.push(
             <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
@@ -152,35 +148,21 @@ export default function AboutScreen() {
 
         }
 
-        // if(quesCount==currentPage){
-        //   console.log('repeatQues is');
-        
-        // setCurrentPage(quesCount + 1);
-        // // console.log(quesCount);
-        
-        // elements.push(
-        //   <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
-        //    {/* <Text> {falseCount1} </Text> */}
-        //    <TouchableOpacity onPress={reformQues}>
-        //    <Text>Press to Reform</Text>
-        //   </TouchableOpacity>
-        //   </View>
-        // );
-        
-        // setReformedContent(elements);
-        //   }
+  
 
-        // repeat.forEach(item => {
-        //   console.log(item+"repeat no")
-        // });
-
-
-
+        repeat.forEach(item => {
+          console.log(item+"repeat no")
+        });
 
       } else {
 
+      
+       // setLastSelected(btnId);
+         console.log(lastSelected+"Last selected");
         status = false;
-       
+    
+        console.log(falseCount1);
+        
         const fields = { id, status };
 
         setResult(prevState => ({
@@ -188,51 +170,81 @@ export default function AboutScreen() {
           score: [...prevState.score, fields]
         }));
 
-      //  repeat.push(id); 
         setRepeatQues(prevState => [...prevState, id]);
+
+        console.log('Wrong')
+      
        
       }
 
       if(question_mode==true){
-        console.log('true');
-           setNextQues(nextQues +1);
-           console.log(nextQues + "Next Ques");
   
-           console.log(quesCount);
+       // setNextQues(nextQues +1);
+
+ 
+        displayResult.push(
+          <View key={1} style={{ ...styles.container, flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 20, backgroundColor: '#F5B7B1', paddingTop: 25, width: 200 }}>
+          <Text style={{ textAlign: 'center' }}> Wrong Answer. Try Again </Text>
+      </View>
+        );
+          if(status==false){
+          setDisplayState(displayResult);
+          }
+        
+        
+       
         for (let j = 0; j < quesCount; j++) { // Example: Generate 5 elements
-         // console.log(repeatQues[j]+" repeat");
-        console.log(j + "j val");
-          console.log("nextQues Value"+nextQues);
-        //  console.log(question_mode);
+     
+         
         for (let r = 0; r < repeatQues.length; r++) { 
           
           if (correctAnswer[j] == repeatQues[r]) {
-            setCurrentPage(repeatQues[r]);
-            console.log(repeatQues[r]+" current page executed")
-           // console.log(repeat[j]);
+
+            if(status==true){
+              setCurrentPage(repeatQues[r]);
+              setDisplayState(null);
+            }
+        
           }
-  
-          // if(j==repeat.length-1){
-          //   console.log('Equal');
-          // }
         }
       }
+
+     
+
       }else{
-        console.log('false');
+      //  outline = 1; 
+        console.log(status+"OutSide Timer");
+         
         setCurrentPage(currentPage + 1);
-    
+       
+     
+     
       }
 
+   
+      if(quesCount==currentPage){
+        console.log('repeatQues is');
+      
+       setCurrentPage(quesCount + 1);
+       console.log(quesCount);
+      
+      elements.push(
+        <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+       
+         <TouchableOpacity onPress={reformQues}>
+         <Text>Press to Reform</Text>
+        </TouchableOpacity>
+        </View>
+      );
+      
+      setReformedContent(elements);
 
-      console.log(repeatQues);
+        }
+
       setLastSelected(null);
 
-    //  setRepeatQues(repeat);
-      // Iterate through the data array
-   
       const trueCount = answerList.filter(item => item === true).length;
 
-      console.log(trueCount);
 
 
     } catch (error) {
@@ -243,38 +255,22 @@ export default function AboutScreen() {
 
   };
 
-  console.log(result);
-
-  console.log(result.score);
-
-  console.log(repeatQues);
-
   result.score.forEach(item => {
     // Check the status of each item and increment the corresponding counter
     
     if (item.status==true) {
 
       trueCount1++;
-
-      console.log(repeat+"true");
+   
 
     } else {
 
       falseCount1++;
      
-      console.log(item.id+"false");
-     // repeat.push(item.id); 
-     // repeat = repeat.filter(item => item !== item.id);
+
     }
+
   });
-
-  console.log(repeat+"Repeat");
-
-  console.log(falseCount1);
-
-  console.log(repeatQues);
-
- 
 
 
   const validateAnswer = async (btnId, id, text) => {
@@ -283,9 +279,18 @@ export default function AboutScreen() {
 
     setSelectedAnswer(text);
 
-    console.log(btnId);
-
     setLastSelected(btnId);
+
+    setBackgroundColor('#DAF7A6'); 
+    setTimeout(() => {
+    //  setDelayed(true);
+     // status == true; 
+    // Change to your desired background color
+      console.log(status+"Inside Timer");
+      
+     // setCurrentPage(currentPage + 1);
+    }, 3000); // 30 seconds in milliseconds
+ 
 
   }
 
@@ -297,7 +302,6 @@ export default function AboutScreen() {
 
         const response = await axios.get('http://localhost:8000/create');
         // Handle the response and update state or perform any other actions
-        console.log(response.data.data[4].answer);
 
         setQuesData(response.data.data)
         setQuesCount(response.data.count)
@@ -308,7 +312,7 @@ export default function AboutScreen() {
 
           correctAnswerArr.push(response.data.data[i].q_id)
 
-          imageListArr.push(response.data.data[i].image_path);
+          imageListArr.push(response.data.data[i].question);
 
         }
 
@@ -316,7 +320,7 @@ export default function AboutScreen() {
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
 
-        
+        console.log(imageList);
 
       } catch (error) {
         // Handle errors
@@ -341,18 +345,12 @@ export default function AboutScreen() {
 
     setNextQues(nextQues +1);
 
-    console.log(repeat.length);
 
-    let textToRender;
-
-    console.log(nextQues);
-
-  // if (1 === k) {
     for (let j = 0; j < repeatQues.length ; j++) { // Example: Generate 5 elements
-      console.log(repeatQues[j]);
+   
       if (j == nextQues) {
         setCurrentPage(repeatQues[j]);
-        console.log(repeatQues[j]);
+      
         // elements.push(
         //   <View key={j} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
         //    {repeatQues[j]}
@@ -363,14 +361,13 @@ export default function AboutScreen() {
 
   };
 
-  for (i; i <= quesCount; i++) {
 
-    console.log(i+ "Value without ++i");
+  for (i; i <= quesCount; i++) {
 
     if (i == currentPage) {
 
       i--;
-      console.log(i+ "Value without --i");
+
       stringWithoutBraces = mergeArray[i].slice(1, -1); // Remove curly braces
       arrayValues = stringWithoutBraces.split(','); // Split by commas
            
@@ -382,12 +379,13 @@ export default function AboutScreen() {
 
             <View>
               <Text></Text>
-              <Image source={imageList[i]} style={{ width: 200, height: 150 }} />
+              {/* <Image source={imageList[i]} style={{ width: 200, height: 150 }} /> */}
+              <Text style={[styles.arabicText ]}>{imageList[i]}</Text>
             </View>
 
             {arrayValues.map((_, x) => (
 
-              <TouchableHighlight key={x} style={[styles.button, lastSelected === x && { backgroundColor: 'green' }]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x],question_mode)}  >
+              <TouchableHighlight key={x} style={[styles.button, lastSelected == x && {backgroundColor}, lastSelected === x && {  borderColor: 'blue', borderWidth: 2, borderRadius: 5}]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x],question_mode)}  >
                 <Text>
                   {arrayValues[x].replace(/["']/g, '')}
                 </Text>
@@ -399,33 +397,40 @@ export default function AboutScreen() {
           </View>
 
           <View style={styles.answerPanel}>
-            <TouchableOpacity style={styles.button} onPress={() => handleAnswer(correctAnswer[i], selectedAnswer, question_mode)} >
-              <Text style={styles.buttonText}> Lock </Text>
+            <TouchableOpacity color={backgroundColor} style={styles.button}  onPress={() => handleAnswer(correctAnswer[i], selectedAnswer, question_mode)} >
+              <Text style={styles.buttonText} color={backgroundColor}> Lock </Text>
+             
             </TouchableOpacity>
           </View>
 
-      <View style={styles.container}>
-      <TouchableOpacity onPress={reformQues}>
-
-        <Text>Press to Reform</Text>
-        <Text></Text>
-      </TouchableOpacity>
-      {reformedContent}
-     
-      </View>
-
+          <View style={styles.answerPanel}>
+            <Text>
+              {displayState}
+            </Text>
+          </View>
+        
         </View>
+
       )
     }
  
   }
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={reformQues}>
-      <Text>Press to Reform</Text>
-      </TouchableOpacity>
-      {reformedContent}
+    <View style={{flex:'1',justifyContent:'center', alignItems:'center',backgroundColor :'#F5F5F5'}}>
+      <View style={{ padding: 25, backgroundColor:'##F8F8FF'}}>
+      <View style={{ padding: 25, backgroundColor:'#FFFAFA'}}>
+      { question_mode==false ? (
+    <>
+      <Text style={{marginBottom:10}}>Wrong: {falseCount1}</Text>
+      <Text style={{marginBottom:10}}>Correct: {trueCount1}  </Text>
+    </>
+  ) : null }
+     </View>
+    
+    {reformedContent}
+    </View>
+    
     </View>
   );
 
@@ -484,5 +489,14 @@ const styles = StyleSheet.create({
   },
   activeButton: {
     backgroundColor: 'green', // Change to the desired active color
+  },
+  arabicText: {
+    display:'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'Amiri Quran',
+    fontSize: 50,
+    width:200, 
+    height: 150
   },
 });

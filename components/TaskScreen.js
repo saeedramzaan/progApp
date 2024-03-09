@@ -2,13 +2,13 @@
 import React from "react";
 import { Button, View, Text } from "react-native";
 
-export default function HomeScreen({ navigation }) {
+export default function TaskScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Surah Al-Fatiha</Text>
+      <Text>Task One</Text>
       <Button
-        title="Go to Task"
-        onPress={() => navigation.navigate("Task")}
+        title="Task 1"
+        onPress={() => navigation.navigate("About")}
       />
     </View>
   );
