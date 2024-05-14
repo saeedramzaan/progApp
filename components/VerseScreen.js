@@ -20,7 +20,9 @@ const VerseScreen = ({ navigation }) => {
 
         console.log(value);
 
-        const resAnswer = await axios.post('http://localhost:8000/api/loadVerses', { id: value });
+          const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/loadVerses', { id: value });
+      //  const resAnswer = await axios.post('http://localhost:8000/mapi/loadVerses', { id: value });
+
 
         console.log(resAnswer.data);
 
@@ -38,13 +40,15 @@ const VerseScreen = ({ navigation }) => {
 
   return (
     <>
+ 
       {verse_no.map((item, index) => (
         <View key={index}>
           <Button
             title={item}
             onPress={() => {
-              const mergedObject = { chapter: value, verse: item }; // Example other number, replace with your actual number
-              navigation.navigate('About', mergedObject);
+               const mergedObject = { chapter: value, verse: item }; // Example other number, replace with your actual number
+               navigation.navigate('TaskScreen', mergedObject);
+             // navigation.navigate("About");
             }}
           />
         </View>

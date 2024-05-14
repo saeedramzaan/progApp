@@ -5,34 +5,68 @@ import axios from "axios";
 
 export default function ChapterScreen({ navigation }) {
 
-  const btn1 = '1';
-  const btn2 = '2';
+  const AlFatiha = '1';
+  const AlQadr = '97';
+  const AlFil= '105';
 
   return (
 
     <View style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
       <View style={styles.answerPanel}>
+
         <View style={styles.buttonContainer}>
           <Button
             title="Al Fatiha"
-            onPress={() => navigation.navigate('Verse', { value: btn1 })}
+            onPress={() => navigation.navigate('Verse', { value: AlFatiha })}
+          />
+        </View>
+
+        
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Al Qadr-97"
+            onPress={() => navigation.navigate('Verse', { value: AlQadr })}
           />
         </View>
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Al Fatiha"
-            onPress={() => navigation.navigate('Verse', { value: btn1 })}
+            title="Al Fil-105"
+            onPress={() => navigation.navigate('Verse', { value: AlFil })}
           />
         </View>
 
+        
         <View style={styles.buttonContainer}>
           <Button
-            title="Al Fatiha"
-            onPress={() => navigation.navigate('Verse', { value: btn1 })}
+            title="Quraish-106"
+            onPress={() => navigation.navigate('Verse', { value: 106  })}
           />
         </View>
+
+           <View style={styles.buttonContainer}>
+          <Button
+            title="Al-Kauder-108"
+            onPress={() => navigation.navigate('Verse', { value: 108  })}
+          />
+        </View>
+
+          <View style={styles.buttonContainer}>
+          <Button
+            title="Al-Masad-101"
+            onPress={() => navigation.navigate('Verse', { value: 111  })}
+          />
+        </View>
+
+              <View style={styles.buttonContainer}>
+          <Button
+            title="Al-Fajr-89"
+            onPress={() => navigation.navigate('Verse', { value: 89  })}
+          />
+        </View>
+
+
       </View>
     </View>
   );

@@ -1,18 +1,26 @@
+// import React from 'react';
+// import { View, Text, StyleSheet, Dimensions } from 'react-native';
+
 // Aboutscreen.js
-import React, { useState, useEffect, Component } from "react";
-import { Button, View, Text, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect} from "react";
+import {  View, Text, StyleSheet,TouchableHighlight,TouchableOpacity,Dimensions,Button  } from "react-native";
 import axios from 'axios';
-import { TouchableHighlight } from "react-native-web";
-import { useRoute } from '@react-navigation/native';
 
-export default function AboutScreen({ navigation }) {
+const { width, height } = Dimensions.get('window');
 
-  const route = useRoute();
 
-  let chapter = route.params.chapter;
 
-  let verse = route.params.verse;
+export default function TestArabic() {
+
+    //const route = useRoute();
+
+  // let chapter = route.params.chapter;
+
+  // let verse = route.params.verse;
+
+  let chapter = "1";
+
+  let verse = "1";
 
   let [nextVerse, setNextVerse] = useState(verse);
 
@@ -21,6 +29,8 @@ export default function AboutScreen({ navigation }) {
   const [quesData, setQuesData] = useState([]);
 
   let [mergeArray, setMergeArray] = useState([]);
+
+  let [ansInfo, setansInfo] = useState([]);
 
   let [quesCount, setQuesCount] = useState(0);
 
@@ -87,19 +97,15 @@ export default function AboutScreen({ navigation }) {
 
   let i = 0;
 
+  useEffect(() => {
 
 
-  // useEffect(() => {
+  }, [])
 
-
-
-  // }, [])
 
   const handleAnswer1 = async (surah,ayah) => {
  
-     console.log(currentPage);
-
-
+   
     setRepetition_mode(false);
 
     setTrueCount(0);
@@ -137,14 +143,13 @@ export default function AboutScreen({ navigation }) {
      setCorrectAnswer(correctAnswerArr);
      setimageList(imageListArr);
  
-  
+     setCurrentPage(1);
 
    } catch (error) {
      // Handle errors
      console.error('Error fetching data:', error);
    }
 
- //  setCurrentPage(1);
 
   };
 
@@ -155,9 +160,55 @@ export default function AboutScreen({ navigation }) {
     setOutline(1);
     setBackgroundColor('#DAF7A6');
 
+    setCurrentPage(prevPage => prevPage + 1);
+
+    console.log(currentPage);
+
+
+
+      try {
+
+        console.log(search_id);
+
+        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
+        // Handle the response and update state or perform any other actions
+
+        setQuesData(response.data.data)
+        setQuesCount(response.data.count)
+
+        for (let i = 0; i <= response.data.count - 1; i++) {
+
+         // combinedArr.push(response.data.data[i].answer);
+          correctAnswerArr.push(i + 1)
+       
+
+        if (i == currentPage) {
+
+          stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
+          arrayValues = stringWithoutBraces.split(','); // Split by commas
+          imageListArr.push(response.data.data[i].question);
+
+        }
+
+        }
+
+
+        setMergeArray(arrayValues);
+        setCorrectAnswer(correctAnswerArr);
+        setimageList(imageListArr);
+
+         console.log(mergeArray);
+
+
+      } catch (error) {
+        // Handle errors
+        console.error('Error fetching data:', error);
+      }
+
+
     let displayResult = [];
 
-    const value = await AsyncStorage.getItem('yourKey');
+   // const value = await AsyncStorage.getItem('yourKey');
 
     let verse_no = chapter+":"+nextVerse+":"+quesId;
 
@@ -166,6 +217,7 @@ export default function AboutScreen({ navigation }) {
     try {
 
       console.log(verse_no);
+      console.log(selectedAnswer);
 
       const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/ans', { id: verse_no });
 
@@ -309,7 +361,7 @@ export default function AboutScreen({ navigation }) {
 
   const validateAnswer = async (btnId, id, text) => {
 
-    await AsyncStorage.setItem('yourKey', 'yourValue');
+  //  await AsyncStorage.setItem('yourKey', 'yourValue');
 
     setSelectedAnswer(text);
 
@@ -327,7 +379,7 @@ export default function AboutScreen({ navigation }) {
 
         console.log(search_id);
 
-        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
+        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/getQuizInfo', { id: search_id });
         // Handle the response and update state or perform any other actions
 
         setQuesData(response.data.data)
@@ -335,19 +387,21 @@ export default function AboutScreen({ navigation }) {
 
         for (let i = 0; i <= response.data.count - 1; i++) {
 
-          combinedArr.push(response.data.data[i].answer);
-          correctAnswerArr.push(i + 1)
-          imageListArr.push(response.data.data[i].question);
+          if (i == currentPage) {
 
+            stringWithoutBraces = response.data.data[i-1].answer.slice(1, -1); // Remove curly braces
+            arrayValues = stringWithoutBraces.split(','); // Split by commas
+            imageListArr.push(response.data.data[i-1].question);
+            
+            setMergeArray(arrayValues);
+            setimageList(imageListArr);
         }
 
-        setMergeArray(combinedArr);
-        setCorrectAnswer(correctAnswerArr);
-        setimageList(imageListArr);
+      
 
-         console.log(mergeArray);
+      } 
 
-
+      console.log(arrayValues);
       } catch (error) {
         // Handle errors
         console.error('Error fetching data:', error);
@@ -360,53 +414,38 @@ export default function AboutScreen({ navigation }) {
     }
   }, [quesCount], [mergeArray], [imageList]); // 
 
+  // for (i; i <= quesCount; i++) {
 
-  const reformQues = async (storeRepetition) => {
-
-    for (let k = 0; k <= quesCount; k++) {
-
-      if (storeRepetition[0] == k) {
-        setCurrentPage(k);
-      }
-      setRepetition_mode(true);
-
-    }
-  };
-
-  for (i; i <= quesCount; i++) {
-
-    if (i == currentPage) {
-
-      console.log(i);
-      i--;
-
-      stringWithoutBraces = mergeArray[i].slice(1, -1); // Remove curly braces
-      arrayValues = stringWithoutBraces.split(','); // Split by commas
-      
-      return (
-        <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
+    if (1==1) {
+  return (
+    <View key={i} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
 
 
-          <View key={i} style={styles.box}>
+    <View key={i} style={styles.box}>
 
-            <View>
-              <Text></Text>
-              {/* <Image source={imageList[i]} style={{ width: 200, height: 150 }} /> */}
-              <Text style={[styles.arabicText]}>{imageList[i]}</Text>
-            </View>
+    <View>
+     
+      {/* <Image source={imageList[i]} style={{ width: 200, height: 150 }} /> */}
+      <Text style={[styles.arabicText]}>{imageList}</Text>
+    </View>
 
-            {arrayValues.map((_, x) => (
+    {mergeArray.map((_, x) => (
 
-              <TouchableHighlight key={x} style={[styles.button, lastSelected == x && { backgroundColor }, lastSelected === x && { borderColor: 'blue', borderWidth: 2, borderRadius: 5 }]} onPress={() => validateAnswer(x, correctAnswer[i], arrayValues[x], repetition_mode)}  >
-                <Text>
-                  {arrayValues[x].replace(/["']/g, '')}
-                </Text>
-              </TouchableHighlight>
+    // <View key={x} >
+    //   <Button title={mergeArray[x]}  />
+    // </View>
+
+      <TouchableHighlight key={x} style={[styles.button]} onPress={() => validateAnswer(x, correctAnswer[i], mergeArray[x], repetition_mode)}   >
+        <Text>
+          {mergeArray[x].replace(/["']/g, '')}
+        </Text>
+      </TouchableHighlight>
 
 
-            ))}
 
-          </View>
+
+
+    ))}
 
           <View style={styles.answerPanel}>
             <TouchableOpacity color={backgroundColor} style={styles.button} onPress={() => handleAnswer(i + 1, correctAnswer[i], selectedAnswer, repetition_mode,search_id)} >
@@ -414,53 +453,48 @@ export default function AboutScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.answerPanel}>
-            <Text>
-              {displayState}
-            </Text>
-          </View>
-        </View>
-
-      )
+  </View>
+  </View>  )
     }
+  // }
 
-  }
-
-  return (
-    <View style={{ flex: '1', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F5' }}>
-      <View style={{ padding: 25, backgroundColor: '##F8F8FF' }}>
-        <View style={{ padding: 25, backgroundColor: '#FFFAFA' }}>
-          {repetition_mode == false ? (
-            <>
-              <Text style={{ marginBottom: 10 }}>Wrong: {falseCount}</Text>
-              <Text style={{ marginBottom: 10 }}>Correct: {trueCount}  </Text>
-            </>
-          ) : null}
+return (
+  <View style={{ flex: '1', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F5' }}>
+    <View style={{ padding: 25, backgroundColor: '##F8F8FF' }}>
+      <View style={{ padding: 25, backgroundColor: '#FFFAFA' }}>
+        {repetition_mode == false ? (
+          <>
+            <Text style={{ marginBottom: 10 }}>Wrong: {falseCount}</Text>
+            <Text style={{ marginBottom: 10 }}>Correct: {trueCount}  </Text>
+          </>
+        ) : null}
 
 {!storeRepetition.length==0 ? (
-  <>
-    <TouchableOpacity
-      style={{ width: 800, ...styles.ReformButton, backgroundColor: backgroundColor }}
-      onPress={() => reformQues(storeRepetition)}>
-      <Text style={[styles.buttonText]}> Reform My Mistakes </Text>
-    </TouchableOpacity>
-  </>
-) : (
-  // Else condition
-  // You can add any elements or logic here that you want to execute when the condition is false
-  <View>
-        <Button title="Next Verse" onPress={() => handleAnswer1(chapter,nextVerse)} />
-      </View>
-)}
-
-        </View>
-
-        {reformedContent}
+<>
+  <TouchableOpacity
+    style={{ width: 800, ...styles.ReformButton, backgroundColor: backgroundColor }}
+    onPress={() => reformQues(storeRepetition)}>
+    <Text style={[styles.buttonText]}> Reform My Mistakes </Text>
+  </TouchableOpacity>
+</>
+  ) : (
+// Else condition
+// You can add any elements or logic here that you want to execute when the condition is false
+<View>
+      <Button title="Next Verse" onPress={() => handleAnswer1(chapter,nextVerse)} />
+    </View>
+  )}
 
       </View>
+
+      {reformedContent}
 
     </View>
-  );
+
+  </View>
+);
+
+  
 }
 
 const styles = StyleSheet.create({
@@ -468,12 +502,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'lightgrey',
-
+    backgroundColor: '#fff',
   },
   box: {
-    width: 320, // Set the desired width and height for the square box
-    height: 300,
+    // width: 320, // Set the desired width and height for the square box
+    // height: 300,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
@@ -520,3 +553,4 @@ const styles = StyleSheet.create({
     height: 150
   },
 });
+

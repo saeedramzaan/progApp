@@ -6,13 +6,17 @@ import axios from 'axios';
 import { TouchableHighlight } from "react-native-web";
 import { useRoute } from '@react-navigation/native';
 
-export default function AboutScreen({ navigation }) {
+export default function AboutScreen() {
 
-  const route = useRoute();
+   const route = useRoute();
 
-  let chapter = route.params.chapter;
+   let chapter = route.params.chapter;
 
-  let verse = route.params.verse;
+   let verse = route.params.verse;
+
+  // let chapter = "1";
+
+  // let verse = "1";
 
   let [nextVerse, setNextVerse] = useState(verse);
 
@@ -89,17 +93,15 @@ export default function AboutScreen({ navigation }) {
 
 
 
-  // useEffect(() => {
+  useEffect(() => {
 
 
 
-  // }, [])
+  }, [])
 
   const handleAnswer1 = async (surah,ayah) => {
  
-     console.log(currentPage);
-
-
+   
     setRepetition_mode(false);
 
     setTrueCount(0);
@@ -137,14 +139,13 @@ export default function AboutScreen({ navigation }) {
      setCorrectAnswer(correctAnswerArr);
      setimageList(imageListArr);
  
-  
+     setCurrentPage(1);
 
    } catch (error) {
      // Handle errors
      console.error('Error fetching data:', error);
    }
 
- //  setCurrentPage(1);
 
   };
 
@@ -339,9 +340,20 @@ export default function AboutScreen({ navigation }) {
           correctAnswerArr.push(i + 1)
           imageListArr.push(response.data.data[i].question);
 
+
+          if (i == currentPage) {
+
+          
+
+            stringWithoutBraces = response.data.data[i-1].answer.slice(1, -1); // Remove curly braces
+            arrayValues = stringWithoutBraces.split(','); // Split by commas
+  
+            setMergeArray(arrayValues);
         }
 
-        setMergeArray(combinedArr);
+        }
+
+      //  setMergeArray(combinedArr);
         setCorrectAnswer(correctAnswerArr);
         setimageList(imageListArr);
 
@@ -390,7 +402,7 @@ export default function AboutScreen({ navigation }) {
           <View key={i} style={styles.box}>
 
             <View>
-              <Text></Text>
+             
               {/* <Image source={imageList[i]} style={{ width: 200, height: 150 }} /> */}
               <Text style={[styles.arabicText]}>{imageList[i]}</Text>
             </View>
