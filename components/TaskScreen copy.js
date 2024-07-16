@@ -5,26 +5,33 @@
 import React, { useState, useEffect} from "react";
 import { Image, View, Text, StyleSheet,TouchableHighlight,TouchableOpacity,Dimensions,Button  } from "react-native";
 import axios from 'axios';
+import { useRoute } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 
 
-export default function FullScreen() {
+export default function TaskScreen() {
 
-    //const route = useRoute();
+    const route = useRoute();
 
-  // let chapter = route.params.chapter;
+  let chapter = route.params.chapter;
 
-  // let verse = route.params.verse;
+  let verse = route.params.verse;
 
-  let chapter = "1";
+  // let chapter = "1";
 
-  let verse = "1";
+  // let verse = "1";
+
+
 
   let [nextVerse, setNextVerse] = useState(verse);
 
   let search_id = chapter + ":" + verse;
+
+  console.log(search_id);
+
+  let [searchVerse, setSearchVerse] = useState(search_id);
 
   const [quesData, setQuesData] = useState([]);
 
@@ -102,10 +109,69 @@ export default function FullScreen() {
 
   // }, [])
 
+  const fetchHandle = async () => {
+
+    try {
+
+      console.log(search_id);
+
+      const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: searchVerse });
+      // Handle the response and update state or perform any other actions
+
+      setQuesData(response.data.data)
+      setQuesCount(response.data.count)
+
+      console.log(currentPage);
+     
+
+      for (let i = 0; i <= response.data.count - 1; i++) {
+
+       // combinedArr.push(response.data.data[i].answer);
+        correctAnswerArr.push(i + 1)
+        imageListArr.push(response.data.data[i].question);
+
+        console.log(repetition_mode);
+
+
+        stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
+      
+        arrayValues = stringWithoutBraces.split(','); // Spli
+
+        combinedArr.push(arrayValues);
+
+       // imageListArr.push(response.data.data[i].question);
+      
+
+        setansInfo(combinedArr);
+
+      if (i == currentPage && repetition_mode==false) {
+
+        stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
+        arrayValues = stringWithoutBraces.split(','); // Split by commas
+        setMergeArray(arrayValues);
+        console.log(currentPage);
+      }
+
+      }
+
+      console.log(arrayValues);
+    
+      setCorrectAnswer(correctAnswerArr);
+      setimageList(imageListArr);
+
+       console.log(mergeArray);
+
+    } catch (error) {
+      // Handle errors
+      console.error('Error fetching data:', error);
+    }
+
+  }
+
 
   const handleAnswer1 = async (surah,ayah) => {
  
-   
+    setCurrentPage(1);
     setRepetition_mode(false);
 
     setTrueCount(0);
@@ -113,7 +179,7 @@ export default function FullScreen() {
 
     setNextClick(true);
 
-    setMergeArray([]);
+   // setMergeArray([]);
          
     ayah++; 
 
@@ -121,37 +187,62 @@ export default function FullScreen() {
 
     search_id = surah+":"+ayah; 
 
+    setSearchVerse(search_id);
+
+
+  try {
+
     console.log(search_id);
 
-   try {
+    setSearchVerse(search_id);
 
-     const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
-     // Handle the response and update state or perform any other actions
-
-     setQuesData(response.data.data)
-     setQuesCount(response.data.count)
-
-     for (let i = 0; i <= response.data.count - 1; i++) {
-
-       combinedArr.push(response.data.data[i].answer);
-       correctAnswerArr.push(i + 1)
-       imageListArr.push(response.data.data[i].question);
-
-     }
-
-     setMergeArray(combinedArr);
-     setCorrectAnswer(correctAnswerArr);
-     setimageList(imageListArr);
  
-     setCurrentPage(1);
 
-   } catch (error) {
-     // Handle errors
-     console.error('Error fetching data:', error);
-   }
+    const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
+    // Handle the response and update state or perform any other actions
+
+    setQuesData(response.data.data)
+    setQuesCount(response.data.count)
+
+    console.log(currentPage);
+    console.log(quesCount);
+   
+
+    for (let i = 0; i <= response.data.count - 1; i++) {
+
+     // combinedArr.push(response.data.data[i].answer);
+      correctAnswerArr.push(i + 1)
+      imageListArr.push(response.data.data[i].question);
+
+      console.log(repetition_mode);
+
+   // if (nextVerse == 1 && repetition_mode == false) {
+
+      stringWithoutBraces = response.data.data[0].answer.slice(1, -1); // Remove curly braces
+      arrayValues = stringWithoutBraces.split(','); // Split by commas
+      setMergeArray(arrayValues);
+      console.log(arrayValues);
+   // }
+
+    }
+
+    console.log(arrayValues);
+  
+    setCorrectAnswer(correctAnswerArr);
+    setimageList(imageListArr);
+
+  
+    console.log(mergeArray);
+
+  } catch (error) {
+    // Handle errors
+    console.error('Error fetching data:', error);
+  }
 
 
   };
+
+ 
 
   const handleAnswer = async (quesId, id, selectedAnswer, repetition_mode,search_id) => {
 
@@ -159,7 +250,7 @@ export default function FullScreen() {
     console.log(quesId);
 
     setOutline(1);
-    setBackgroundColor('#DAF7A6');
+    setBackgroundColor('#089000');
 
    // console.log
 
@@ -168,49 +259,61 @@ export default function FullScreen() {
     console.log(currentPage);
 
 
+    fetchHandle();
+      // try {
 
-      try {
+      //   console.log(search_id);
 
-        console.log(search_id);
+      //   const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: searchVerse });
+      //   // Handle the response and update state or perform any other actions
 
-        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
-        // Handle the response and update state or perform any other actions
+      //   setQuesData(response.data.data)
+      //   setQuesCount(response.data.count)
 
-        setQuesData(response.data.data)
-        setQuesCount(response.data.count)
-
-        console.log(currentPage);
+      //   console.log(currentPage);
        
 
-        for (let i = 0; i <= response.data.count - 1; i++) {
+      //   for (let i = 0; i <= response.data.count - 1; i++) {
 
-         // combinedArr.push(response.data.data[i].answer);
-          correctAnswerArr.push(i + 1)
-          imageListArr.push(response.data.data[i].question);
+      //    // combinedArr.push(response.data.data[i].answer);
+      //     correctAnswerArr.push(i + 1)
+      //     imageListArr.push(response.data.data[i].question);
 
-          console.log(repetition_mode);
+      //     console.log(repetition_mode);
 
-        if (i == currentPage && repetition_mode==false) {
 
-          stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
-          arrayValues = stringWithoutBraces.split(','); // Split by commas
-          setMergeArray(arrayValues);
-          console.log(currentPage);
-        }
+      //     stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
+        
+      //     arrayValues = stringWithoutBraces.split(','); // Spli
 
-        }
+      //     combinedArr.push(arrayValues);
 
-        console.log(arrayValues);
+      //    // imageListArr.push(response.data.data[i].question);
+        
+
+      //     setansInfo(combinedArr);
+
+      //   if (i == currentPage && repetition_mode==false) {
+
+      //     stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
+      //     arrayValues = stringWithoutBraces.split(','); // Split by commas
+      //     setMergeArray(arrayValues);
+      //     console.log(currentPage);
+      //   }
+
+      //   }
+
+      //   console.log(arrayValues);
       
-        setCorrectAnswer(correctAnswerArr);
-        setimageList(imageListArr);
+      //   setCorrectAnswer(correctAnswerArr);
+      //   setimageList(imageListArr);
 
-         console.log(mergeArray);
+      //    console.log(mergeArray);
 
-      } catch (error) {
-        // Handle errors
-        console.error('Error fetching data:', error);
-      }
+      // } catch (error) {
+      //   // Handle errors
+      //   console.error('Error fetching data:', error);
+      // }
 
 
     let displayResult = [];
@@ -267,8 +370,9 @@ export default function FullScreen() {
           console.log(storeRepetition);
           if (storeRepetition.length == 0) {
               
-
-            setCurrentPage(quesCount + 1);
+            setCurrentPage(quesCount+1);
+            console.log('logout');
+         //   setCurrentPage(quesCount + 1);
 
             elements.push(
 
@@ -316,12 +420,28 @@ export default function FullScreen() {
         for (let j = 0; j < quesCount; j++) { // Example: Generate 5 elements
 
           for (let r = 0; r <= storeRepetition.length; r++) {
-
+             console.log(correctAnswer);
+          //   console.log(storeRepetition);
             if (storeRepetition[r] === correctAnswer[j]) {
-              if (status === true) {
-                setCurrentPage(storeRepetition[r]); // Re-call Reform Questions
+             if (status === true) {
+              console.log(storeRepetition[r]);
+              console.log(currentPage);
+              console.log(quesCount);
+
+
+   //  let repeat_id = storeRepetition[j]-1; // Array starts with 0
+
+     setMergeArray(ansInfo[storeRepetition[r]-1]);
+     setCurrentPage(storeRepetition[r]); // Current ID must start with 1 
+
+               // setCurrentPage(2); // Re-call Reform Questions
                 setDisplayState(null); // omit 'wrong answer' message
-              }
+            //  }
+
+            // if (storeRepetition.length == 0) {
+
+            //   setCurrentPage(quesCount);
+            }
             }
           }
         }
@@ -329,11 +449,13 @@ export default function FullScreen() {
       } else {
 
         setCurrentPage(currentPage + 1);
+        console.log(currentPage+"Current Page");
+     //   setCurrentPage(1);
 
   
         if (quesCount == currentPage) {
      
-          setCurrentPage(quesCount + 1);
+        //  setCurrentPage(quesCount + 1);
            
           elements.push(
             <View key={1} style={{ ...styles.container, paddingTop: 20 }} paddingTop={40}>
@@ -381,7 +503,7 @@ export default function FullScreen() {
 
     setLastSelected(btnId);
 
-    setBackgroundColor('#DAF7A6');
+    setBackgroundColor('#089000');
 
   }
 
@@ -393,7 +515,7 @@ export default function FullScreen() {
 
         console.log(search_id);
 
-        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/getQuizInfo', { id: search_id });
+        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
         // Handle the response and update state or perform any other actions
 
         setQuesData(response.data.data)
@@ -411,14 +533,16 @@ export default function FullScreen() {
          
 
            setansInfo(combinedArr);
-           
-          if (i == currentPage) {
 
+           
+           console.log(currentPage);
+          if (i == currentPage) {
+             console.log(currentPage);
             stringWithoutBraces = response.data.data[i-1].answer.slice(1, -1); // Remove curly braces
             arrayValues = stringWithoutBraces.split(','); // Split by commas
 
 
-            setMergeArray(combinedArr[i-1]);
+            setMergeArray(arrayValues);
           
        
          
@@ -470,13 +594,15 @@ export default function FullScreen() {
 
             {currentPage<=quesCount ? (
   <>
-  <Text style={[styles.arabicText]}>{imageList[0]}</Text>
+  <View key={3} style={styles.textBox}>
+  <Text style={[styles.arabicText]}>{imageList[currentPage-1]}</Text>
+  </View>
   <View key={2} style={styles.box}>
   {mergeArray.map((_, x) => (
 
 
-<TouchableHighlight key={x} style={[styles.button,lastSelected == x && { backgroundColor }, lastSelected === x && { borderColor: 'blue', borderWidth: 2, borderRadius: 5 }]} onPress={() => validateAnswer(x, correctAnswer[i], mergeArray[x], repetition_mode)}  >
-<Text>
+<TouchableHighlight key={x} style={[styles.button,lastSelected == x && { backgroundColor }, lastSelected === x && { color:'black', borderColor: 'white', borderWidth: 2, borderRadius: 5 }]} onPress={() => validateAnswer(x, correctAnswer[i], mergeArray[x], repetition_mode)}  >
+<Text style={[styles.buttonText, lastSelected == x && { color:'black',   fontWeight: 'bold' }]}>
     {mergeArray[x].replace(/["']/g, '')}
 </Text>
 </TouchableHighlight>
@@ -485,8 +611,9 @@ export default function FullScreen() {
 </View>
 
             <TouchableHighlight color={backgroundColor} style={styles.button} onPress={() => handleAnswer(currentPage, correctAnswer[i], selectedAnswer, repetition_mode,search_id)} >
-              <Text> Lock </Text>
+              <Text style={[styles.buttonText]}> Lock </Text>
             </TouchableHighlight>
+
 
             <View style={styles.answerPanel}>
             <Text>
@@ -498,10 +625,22 @@ export default function FullScreen() {
 
   </>
 ) : (
-  <View key={3} style={styles.box}>
-        <Text>
-            Working
-            </Text>
+  <View key={3} style={styles.container}>
+  {!storeRepetition.length==0 ? (
+    <>
+      <TouchableOpacity
+        style={{ width: 800, ...styles.ReformButton, backgroundColor: backgroundColor }}
+        onPress={() => reformQues(storeRepetition)}>
+        <Text style={[styles.buttonText]}> Reform My Mistakes </Text>
+      </TouchableOpacity>
+    </>
+      ) : (
+    // Else condition
+    // You can add any elements or logic here that you want to execute when the condition is false
+    <View>
+          <Button title="Next Verse" onPress={() => handleAnswer1(chapter,nextVerse)} />
+        </View>
+      )}
     </View>
 )}
 
@@ -519,14 +658,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#DCDCDC',
   },
   box: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'grey',
+    backgroundColor: '#808080',
+    padding: 10,
+  },
+  textBox: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     padding: 10,
   },
   answerPanel: {
@@ -536,15 +682,20 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'grey'
+    backgroundColor: '#DCDCDC'
   },
   button: {
     width: '45%', // Adjust as needed based on your layout
     marginVertical: 10,
     padding: 10,
-    backgroundColor: 'lightblue',
+    backgroundColor: 'black',
     alignItems: 'center',
     borderRadius: 5,
+    color: 'white'
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
   ReformButton: {
     width: '100%', // Adjust the width percentage based on your preference
@@ -556,16 +707,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activeButton: {
-    backgroundColor: 'green', // Change to the desired active color
+  //  backgroundColor: 'green', // Change to the desired active color
   },
   arabicText: {
-    display: 'flex',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     fontFamily: 'Amiri Quran',
     fontSize: 50,
-    width: 200,
-    height: 150
+    color: 'black'
   },
 });
 

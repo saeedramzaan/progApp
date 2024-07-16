@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { ScrollView,View, Text, Button } from 'react-native';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 
@@ -41,7 +41,9 @@ const VerseScreen = ({ navigation }) => {
   return (
     <>
  
+      <ScrollView>
       {verse_no.map((item, index) => (
+
         <View key={index}>
           <Button
             title={item}
@@ -53,6 +55,7 @@ const VerseScreen = ({ navigation }) => {
           />
         </View>
       ))}
+</ScrollView>
     </>
   );
 };

@@ -67,6 +67,15 @@ export default function ChapterScreen({ navigation }) {
         </View>
 
 
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Al-Muttaffin-89"
+            onPress={() => navigation.navigate('Verse', { value: 83  })}
+          />
+        </View>
+
+
+
       </View>
     </View>
   );
