@@ -115,7 +115,10 @@ export default function TaskScreen() {
 
       console.log(search_id);
 
-      const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: searchVerse });
+     // const response = await axios.post('http://localhost:8000/mapi/renderQuestion', { id: search_id });
+
+      const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/renderQuestion', { id: searchVerse });
+      
       // Handle the response and update state or perform any other actions
 
       setQuesData(response.data.data)
@@ -171,6 +174,7 @@ export default function TaskScreen() {
 
   const handleAnswer1 = async (surah,ayah) => {
  
+    console.log(search_id);
     setCurrentPage(1);
     setRepetition_mode(false);
 
@@ -198,8 +202,11 @@ export default function TaskScreen() {
 
  
 
-    const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
+    const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/renderQuestion', { id: search_id });
     // Handle the response and update state or perform any other actions
+
+   // const response = await axios.post('http://localhost:8000/mapi/renderQuestion', { id: search_id });
+
 
     setQuesData(response.data.data)
     setQuesCount(response.data.count)
@@ -252,68 +259,12 @@ export default function TaskScreen() {
     setOutline(1);
     setBackgroundColor('#089000');
 
-   // console.log
-
-   // setCurrentPage(prevPage => prevPage + 1);
 
     console.log(currentPage);
 
 
     fetchHandle();
-      // try {
-
-      //   console.log(search_id);
-
-      //   const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: searchVerse });
-      //   // Handle the response and update state or perform any other actions
-
-      //   setQuesData(response.data.data)
-      //   setQuesCount(response.data.count)
-
-      //   console.log(currentPage);
-       
-
-      //   for (let i = 0; i <= response.data.count - 1; i++) {
-
-      //    // combinedArr.push(response.data.data[i].answer);
-      //     correctAnswerArr.push(i + 1)
-      //     imageListArr.push(response.data.data[i].question);
-
-      //     console.log(repetition_mode);
-
-
-      //     stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
-        
-      //     arrayValues = stringWithoutBraces.split(','); // Spli
-
-      //     combinedArr.push(arrayValues);
-
-      //    // imageListArr.push(response.data.data[i].question);
-        
-
-      //     setansInfo(combinedArr);
-
-      //   if (i == currentPage && repetition_mode==false) {
-
-      //     stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
-      //     arrayValues = stringWithoutBraces.split(','); // Split by commas
-      //     setMergeArray(arrayValues);
-      //     console.log(currentPage);
-      //   }
-
-      //   }
-
-      //   console.log(arrayValues);
-      
-      //   setCorrectAnswer(correctAnswerArr);
-      //   setimageList(imageListArr);
-
-      //    console.log(mergeArray);
-
-      // } catch (error) {
-      //   // Handle errors
-      //   console.error('Error fetching data:', error);
-      // }
+ 
 
 
     let displayResult = [];
@@ -333,9 +284,11 @@ export default function TaskScreen() {
       console.log(verse_no);
       console.log(selectedAnswer);
 
-      const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/ans', { id: verse_no });
+      const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/verbAns', { id: verse_no });
 
       // console.log(resAnswer+"Ansssssssssser"); Never add string with axious response, it would print as object
+
+     // const resAnswer = await axios.post('http://localhost:8000/mapi/verbAns', { id: verse_no });
 
       console.log(resAnswer.data);
 
@@ -356,6 +309,7 @@ export default function TaskScreen() {
         }));
          console.log(storeRepetition);
          console.log(repetition_mode);
+
         if (repetition_mode == true) {
 
           // Remove the correct answer from repeatQues array   
@@ -515,13 +469,20 @@ export default function TaskScreen() {
 
         console.log(search_id);
 
-        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/create', { id: search_id });
+        const response = await axios.post('https://lara-project-mocha.vercel.app/mapi/renderQuestion', { id: search_id });
         // Handle the response and update state or perform any other actions
+
+
+     //   const response = await axios.post('http://localhost:8000/mapi/renderQuestion', { id: search_id });
 
         setQuesData(response.data.data)
         setQuesCount(response.data.count)
 
-        for (let i = 0; i <= response.data.count - 1; i++) {
+           console.log(response.data.data);
+            console.log(response.data.count);
+
+
+       for (let i = 0; i <= response.data.count - 1; i++) {
 
           stringWithoutBraces = response.data.data[i].answer.slice(1, -1); // Remove curly braces
         
@@ -628,6 +589,10 @@ export default function TaskScreen() {
   <View key={3} style={styles.container}>
   {!storeRepetition.length==0 ? (
     <>
+
+             <Text style={{ marginBottom: 10 }}>Wrong: {falseCount}</Text>
+              <Text style={{ marginBottom: 10 }}>Correct: {trueCount}  </Text>
+              
       <TouchableOpacity
         style={{ width: 800, ...styles.ReformButton, backgroundColor: backgroundColor }}
         onPress={() => reformQues(storeRepetition)}>
@@ -671,7 +636,7 @@ const styles = StyleSheet.create({
   textBox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
   },

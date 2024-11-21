@@ -8,6 +8,7 @@ export default function ChapterScreen({ navigation }) {
   const AlFatiha = '1';
   const AlQadr = '97';
   const AlFil= '105';
+  const AlMuttaffin= '83';
 
   return (
 
@@ -18,7 +19,7 @@ export default function ChapterScreen({ navigation }) {
         <View style={styles.buttonContainer}>
           <Button
             title="Al Fatiha"
-            onPress={() => navigation.navigate('Verse', { value: AlFatiha })}
+            onPress={() => navigation.navigate('Verse', { chapter: AlFatiha })}
           />
         </View>
 
@@ -26,14 +27,14 @@ export default function ChapterScreen({ navigation }) {
         <View style={styles.buttonContainer}>
           <Button
             title="Al Qadr-97"
-            onPress={() => navigation.navigate('Verse', { value: AlQadr })}
+            onPress={() => navigation.navigate('Verse', { chapter: AlQadr })}
           />
         </View>
 
         <View style={styles.buttonContainer}>
           <Button
             title="Al Fil-105"
-            onPress={() => navigation.navigate('Verse', { value: AlFil })}
+            onPress={() => navigation.navigate('Verse', { chapter: AlFil })}
           />
         </View>
 
@@ -41,39 +42,44 @@ export default function ChapterScreen({ navigation }) {
         <View style={styles.buttonContainer}>
           <Button
             title="Quraish-106"
-            onPress={() => navigation.navigate('Verse', { value: 106  })}
+            onPress={() => navigation.navigate('Verse', { chapter: 106  })}
           />
         </View>
 
            <View style={styles.buttonContainer}>
           <Button
             title="Al-Kauder-108"
-            onPress={() => navigation.navigate('Verse', { value: 108  })}
+            onPress={() => navigation.navigate('Verse', { chapter: 108  })}
           />
         </View>
 
           <View style={styles.buttonContainer}>
           <Button
             title="Al-Masad-101"
-            onPress={() => navigation.navigate('Verse', { value: 111  })}
+            onPress={() => navigation.navigate('Verse', { chapter: 111  })}
           />
         </View>
 
               <View style={styles.buttonContainer}>
           <Button
             title="Al-Fajr-89"
-            onPress={() => navigation.navigate('Verse', { value: 89  })}
+            onPress={() => navigation.navigate('Verse', { chapter: 89  })}
           />
         </View>
 
-
-        <View style={styles.buttonContainer}>
+              <View style={styles.buttonContainer}>
           <Button
-            title="Al-Muttaffin-89"
-            onPress={() => navigation.navigate('Verse', { value: 83  })}
+            title="Al-Muttaffin-83"
+            onPress={() => navigation.navigate('Verse', { chapter: 83  })}
           />
         </View>
 
+           <View style={styles.buttonContainer}>
+          <Button
+            title="Test-83"
+            onPress={() => navigation.navigate('Verse', { chapter: 83  })}
+          />
+        </View>
 
 
       </View>

@@ -8,12 +8,17 @@ import Screen from "./components/Screen";
 import TestScreen from "./components/TestScreen";
 import TestArabic from "./components/TestArabic";
 import ChapterScreen from "./components/ChapterScreen";
+import VerbNoList from "./components/VerbNoList";
+import QuranVerseList from "./components/QuranVerseList";
+import QuranSurahList from "./components/QuranSurahList";
 import VerseScreen from "./components/VerseScreen";
 import FullScreen from "./components/FullScreen";
 import Effect from "./components/Effect";
 import MobSize from "./components/MobSize";
 import NumberList from "./components/NumberList";
 import TaskScreen from "./components/TaskScreen";
+import QuizHub from "./components/QuizHub";
+import VerbTaskList from "./components/VerbTaskList";
 import FourButtonsGrid from "./components/FourButtonsGrid";
 
 const Stack = createNativeStackNavigator();
@@ -30,10 +35,15 @@ export default function App() {
         <Stack.Screen name="FullScreen" component={FullScreen} />
         <Stack.Screen name="Effect" component={Effect} />
         <Stack.Screen name="Chapter" component={ChapterScreen} />
+        <Stack.Screen name="VerbNoList" component={VerbNoList} />
         <Stack.Screen name="Verse" component={VerseScreen} />
         <Stack.Screen name="MobSize" component={MobSize} />
         <Stack.Screen name="NumberList" component={NumberList} />
         <Stack.Screen name="TaskScreen" component={TaskScreen} />
+        <Stack.Screen name="QuizHub" component={QuizHub} />
+        <Stack.Screen name="VerbTaskList" component={VerbTaskList} />
+        <Stack.Screen name="QuranVerseList" component={QuranVerseList} />
+        <Stack.Screen name="QuranSurahList" component={QuranSurahList} />
         <Stack.Screen name="FourButtonsGrid" component={FourButtonsGrid} />
       </Stack.Navigator>
     </NavigationContainer>

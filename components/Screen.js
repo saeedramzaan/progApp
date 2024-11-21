@@ -103,7 +103,12 @@ export default function Screen() {
 
 
   // }, [])
-
+const options = [
+  { value: "", label: "Select an option" },
+  { value: "1", label: "Verb 1" },
+  { value: "83", label: "Surah 83" },
+  { value: "option3", label: "Option 3" }
+];
 
   const handleAnswer1 = async (surah,ayah) => {
  

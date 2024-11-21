@@ -3,17 +3,27 @@ import { ScrollView,View, Text, Button } from 'react-native';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 
-const VerseScreen = ({ navigation }) => {
+const VerbTaskList = ({ navigation }) => {
 
   const route = useRoute();
 
  // const { value } = route.params;
-  
-  const [verse_no, setVerseNo] = useState([]);
 
-  let chapter = route.params.chapter;
+    let primaryQuiz = route.params.firstDigit;
 
   let verse = route.params.verse;
+
+   // let search_id = chapter + ":" + verse;
+
+    let search_id = 1;
+
+
+  const sub_title = ["Present","Past", "Noun","Opposite"];
+
+
+  console.log(search_id);
+  
+  const [verse_no, setVerseNo] = useState([]);
 
   useEffect(() => {
     // Fetch data once when the component mounts
@@ -24,8 +34,8 @@ const VerseScreen = ({ navigation }) => {
 
      //   console.log(value);
 
-          const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/loadVerses', { id: chapter });
-      //  const resAnswer = await axios.post('http://localhost:8000/mapi/loadVerses', { id: value });
+          const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/loadVerb', { id: primaryQuiz });
+    //    const resAnswer = await axios.post('http://localhost:8000/mapi/loadVerb', { id: value });
 
 
         console.log(resAnswer.data);
@@ -50,10 +60,10 @@ const VerseScreen = ({ navigation }) => {
 
         <View key={index}>
           <Button
-            title={item}
+            title={item+" "+sub_title[index]}
             onPress={() => {
-               const mergedObject = { chapter: chapter, verse: item }; // Example other number, replace with your actual number
-               navigation.navigate('TaskScreen', mergedObject);
+               const mergedObject = { chapter: primaryQuiz, verse: item }; // Example other number, replace with your actual number
+               navigation.navigate('QuizHub', mergedObject);
              // navigation.navigate("About");
             }}
           />
@@ -64,4 +74,4 @@ const VerseScreen = ({ navigation }) => {
   );
 };
 
-export default VerseScreen;
+export default VerbTaskList;
