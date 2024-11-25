@@ -6,21 +6,10 @@ import { useRoute } from '@react-navigation/native';
 
 export default function VerbNoList({ navigation }) {
 
-  const AlFatiha = '1';
-  const AlQadr = '97';
-  const AlFil= '105';
-  const AlMuttaffin= '83';
-
-
-
-  
   const route = useRoute();
 
-  //const { value } = 97;
-  
   const [verse_no, setVerseNo] = useState([]);
   const [quiz_tense, setQuiz_tense] = useState([]);
-
 
 
   useEffect(() => {
@@ -30,11 +19,8 @@ export default function VerbNoList({ navigation }) {
 
       try {
 
-      //  console.log(value);
-
        //   const resAnswer = await axios.post('http://localhost:8000/mapi/chapterList');
-        const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/chapterList', { id: value });
-
+        const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/chapterList');
 
         console.log(resAnswer.data.title);
 
@@ -56,9 +42,7 @@ export default function VerbNoList({ navigation }) {
     <>
  
       <ScrollView>
-                <View>
-                <Text></Text>
-                </View>
+       
       {verse_no.map((item, index) => (
 
 
@@ -69,7 +53,6 @@ export default function VerbNoList({ navigation }) {
               console.log(item);
                const mergedObject = { chapter: item, verse: 1 }; // Example other number, replace with your actual number
                navigation.navigate('Verse', mergedObject);
-             // navigation.navigate("About");
             }}
           />
         </View>

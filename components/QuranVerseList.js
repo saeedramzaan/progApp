@@ -6,18 +6,11 @@ import { useRoute } from '@react-navigation/native';
 
 export default function VerbNoList({ navigation }) {
 
-  const AlFatiha = '1';
-  const AlQadr = '97';
-  const AlFil= '105';
-  const AlMuttaffin= '83';
-
-
-
   
   const route = useRoute();
 
   //const { value } = 97;
-  
+
   const [verse_no, setVerseNo] = useState([]);
   const [quiz_tense, setQuiz_tense] = useState([]);
 
@@ -30,11 +23,10 @@ export default function VerbNoList({ navigation }) {
 
       try {
 
-      //  console.log(value);
-
      //     const resAnswer = await axios.post('http://localhost:8000/mapi/verseList');
-        const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/verseList', { id: value });
+        const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/verseList');
 
+  //  const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/verseList', { id: value });
 
         console.log(resAnswer.data.title);
 
@@ -42,13 +34,11 @@ export default function VerbNoList({ navigation }) {
 
         setQuiz_tense(resAnswer.data.title);
 
-
       } catch (error) {
         // Handle errors
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData(); // Call the async function inside useEffect
   }, []); // Empty dependency array to run once when component mounts
 
@@ -56,13 +46,8 @@ export default function VerbNoList({ navigation }) {
     <>
  
       <ScrollView>
-                <View>
-                <Text></Text>
-                </View>
+
       {verse_no.map((item, index) => (
-
-
-
         <View key={index}>
           <Button
             title={item+" "+quiz_tense[index]}
@@ -70,7 +55,6 @@ export default function VerbNoList({ navigation }) {
               console.log(item);
                const mergedObject = { chapter: item, verse: 1 }; // Example other number, replace with your actual number
                navigation.navigate('Verse', mergedObject);
-             // navigation.navigate("About");
             }}
           />
         </View>
@@ -86,7 +70,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'lightgrey',
-
   },
   box: {
     width: 320, // Set the desired width and height for the square box

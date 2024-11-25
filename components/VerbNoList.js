@@ -33,7 +33,7 @@ export default function VerbNoList({ navigation }) {
       //  console.log(value);
 
       //    const resAnswer = await axios.post('http://localhost:8000/mapi/listQuizNo');
-           const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/verseList', { id: value });
+           const resAnswer = await axios.post('https://lara-project-mocha.vercel.app/mapi/listQuizNo');
 
 
         console.log(resAnswer.data.title);
