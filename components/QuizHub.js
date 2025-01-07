@@ -124,7 +124,9 @@ export default function TaskScreen() {
       setQuesData(response.data.data)
       setQuesCount(response.data.count)
 
-      console.log(currentPage);
+     // console.log(currentPage);
+
+     console.log(response.data.count+"tttt");
      
 
       for (let i = 0; i <= response.data.count - 1; i++) {
@@ -369,6 +371,8 @@ export default function TaskScreen() {
         );
         if (status == false) {
           setDisplayState(displayResult);
+        }else{
+          setDisplayState(null);
         }
 
         for (let j = 0; j < quesCount; j++) { // Example: Generate 5 elements
@@ -402,6 +406,7 @@ export default function TaskScreen() {
 
       } else {
 
+        setDisplayState(null);
         setCurrentPage(currentPage + 1);
         console.log(currentPage+"Current Page");
      //   setCurrentPage(1);

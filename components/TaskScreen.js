@@ -414,8 +414,11 @@ export default function TaskScreen() {
             <Text style={{ textAlign: 'center' }}> Wrong Answer. Try Again </Text>
           </View>
         );
+
         if (status == false) {
           setDisplayState(displayResult);
+        }else{
+           setDisplayState(null);
         }
 
         for (let j = 0; j < quesCount; j++) { // Example: Generate 5 elements
@@ -449,6 +452,7 @@ export default function TaskScreen() {
 
       } else {
 
+        setDisplayState(null);
         setCurrentPage(currentPage + 1);
         console.log(currentPage+"Current Page");
      //   setCurrentPage(1);
@@ -545,8 +549,6 @@ export default function TaskScreen() {
 
             setMergeArray(arrayValues);
           
-       
-         
             
         }
    
@@ -627,6 +629,7 @@ export default function TaskScreen() {
   </>
 ) : (
   <View key={3} style={styles.container}>
+
   {!storeRepetition.length==0 ? (
     <>
     
